@@ -99,6 +99,19 @@ func WSDL(s string) (string, error) {
 							},
 						},
 					},
+					Output: wsdl.OutputOperation{
+						IOOperation: wsdl.IOOperation{
+							Operation: wsdl.Operation{
+								Message: "ElasticOutput",
+							},
+						},
+					},
+					Fault: wsdl.FaultOperation{
+						Operation: wsdl.Operation{
+							Message: "ElasticError",
+						},
+						Name: "ElasticError",
+					},
 				},
 			},
 		},
@@ -112,7 +125,7 @@ func WSDL(s string) (string, error) {
 			Operation: []wsdl.WSDLOperation{
 				{
 					Name: "Elastic",
-					Operation: wsdl.ActionOperation{
+					Operation: &wsdl.ActionOperation{
 						SoapAction: "Elastic",
 						Style:      "document",
 					},
@@ -126,8 +139,26 @@ func WSDL(s string) (string, error) {
 							},
 						},
 					},
-					// Output OutputOperation
-					// Fault  FaultOperation
+					Output: wsdl.OutputOperation{
+						IOOperation: wsdl.IOOperation{
+							Operation: wsdl.Operation{
+								Message: "",
+							},
+							Body: &wsdl.SOAPBody{
+								Use: "literal",
+							},
+						},
+					},
+					Fault: wsdl.FaultOperation{
+						Operation: wsdl.Operation{
+							Message: "",
+						},
+						Name: "ElasticError",
+						Fault: &wsdl.SOAPFault{
+							Name: "ElasticError",
+							Use:  "literal",
+						},
+					},
 				},
 			},
 		},
