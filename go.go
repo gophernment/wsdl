@@ -70,9 +70,9 @@ func WSDL(pro Prototype) (string, error) {
 			Operations: []wsdl.WSDLOperation{
 				{
 					Name:   "Elastic",
-					Input:  wsdl.NewIOOperation("tns:ElasticInput", ""),
-					Output: wsdl.NewIOOperation("tns:ElasticOutput", ""),
-					Fault:  wsdl.NewFaultOperation("tns:ElasticError", "ElasticError", ""),
+					Input:  wsdl.NewIOOperation("ElasticInput", ""),
+					Output: wsdl.NewIOOperation("ElasticOutput", ""),
+					Fault:  wsdl.NewFaultOperation("ElasticError", "ElasticError", ""),
 				},
 			},
 		},
