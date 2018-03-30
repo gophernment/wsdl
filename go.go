@@ -93,17 +93,13 @@ func WSDL(s string) (string, error) {
 				{
 					Name: "Elastic",
 					Input: wsdl.InputOperation{
-						IOOperation: wsdl.IOOperation{
-							Operation: wsdl.Operation{
-								Message: "ElasticInput",
-							},
+						Operation: wsdl.Operation{
+							Message: "ElasticInput",
 						},
 					},
 					Output: wsdl.OutputOperation{
-						IOOperation: wsdl.IOOperation{
-							Operation: wsdl.Operation{
-								Message: "ElasticOutput",
-							},
+						Operation: wsdl.Operation{
+							Message: "ElasticOutput",
 						},
 					},
 					Fault: wsdl.FaultOperation{
@@ -130,23 +126,19 @@ func WSDL(s string) (string, error) {
 						Style:      "document",
 					},
 					Input: wsdl.InputOperation{
-						IOOperation: wsdl.IOOperation{
-							Operation: wsdl.Operation{
-								Message: "",
-							},
-							Body: &wsdl.SOAPBody{
-								Use: "literal",
-							},
+						Operation: wsdl.Operation{
+							Message: "",
+						},
+						Body: &wsdl.SOAPBody{
+							Use: "literal",
 						},
 					},
 					Output: wsdl.OutputOperation{
-						IOOperation: wsdl.IOOperation{
-							Operation: wsdl.Operation{
-								Message: "",
-							},
-							Body: &wsdl.SOAPBody{
-								Use: "literal",
-							},
+						Operation: wsdl.Operation{
+							Message: "",
+						},
+						Body: &wsdl.SOAPBody{
+							Use: "literal",
 						},
 					},
 					Fault: wsdl.FaultOperation{
@@ -162,16 +154,7 @@ func WSDL(s string) (string, error) {
 				},
 			},
 		},
-		Service: wsdl.Service{
-			Name: "GolangWebService",
-			Port: wsdl.Port{
-				Binding: "GOWSDL_Binding",
-				Name:    "GOWSDL_Endpoint",
-				Address: wsdl.Address{
-					Location: "http://localhost:1323/elastic",
-				},
-			},
-		},
+		Service: NewService("http://localhost:1323/elastic"),
 	}
 
 	b, err := xml.Marshal(&def)
@@ -179,4 +162,17 @@ func WSDL(s string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func NewService(loc string) wsdl.Service {
+	return wsdl.Service{
+		Name: "GolangWebService",
+		Port: wsdl.Port{
+			Binding: "GOWSDL_Binding",
+			Name:    "GOWSDL_Endpoint",
+			Address: wsdl.Address{
+				Location: loc,
+			},
+		},
+	}
 }
