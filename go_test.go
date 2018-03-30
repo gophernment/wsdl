@@ -32,8 +32,11 @@ type ElasticInput struct {
 	ListName string `xml:"ListName"`
 }
 
-func (ElasticInput) Name() string {
+func (ElasticInput) MessageName() string {
 	return "ElasticInput"
+}
+func (ElasticInput) TypeName() string {
+	return "Elastic"
 }
 func (ElasticInput) SingleFields() []string {
 	return []string{"ID", "RowID", "CustNo", "SubrNo", "ListName"}
@@ -41,8 +44,11 @@ func (ElasticInput) SingleFields() []string {
 
 type ElasticOutput struct{}
 
-func (ElasticOutput) Name() string {
+func (ElasticOutput) MessageName() string {
 	return "ElasticOutput"
+}
+func (ElasticOutput) TypeName() string {
+	return "ElasticResponse"
 }
 func (ElasticOutput) SingleFields() []string {
 	return []string{"Index", "Type", "ID", "Version", "Created"}
@@ -50,8 +56,11 @@ func (ElasticOutput) SingleFields() []string {
 
 type ElasticError struct{}
 
-func (ElasticError) Name() string {
+func (ElasticError) MessageName() string {
 	return "ElasticError"
+}
+func (ElasticError) TypeName() string {
+	return "ElasticFault"
 }
 func (ElasticError) SingleFields() []string {
 	return []string{"En", "Th", "Code"}

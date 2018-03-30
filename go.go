@@ -17,7 +17,8 @@ type Prototype interface {
 }
 
 type Type interface {
-	Name() string
+	MessageName() string
+	TypeName() string
 	SingleFields() []string
 	// ArrayFields() []string
 }
@@ -41,18 +42,31 @@ func WSDL(pro Prototype) (string, error) {
 					Elements: []wsdl.SchemaElement{
 						{
 							Element: wsdl.Element{
-								Name: "Elastic",
+								Name: pro.InputType().TypeName(),
 							},
 							ComplexType: wsdl.ComplexType{
-								Name: "",
 								Sequence: wsdl.Sequence{
-									Elements: []wsdl.Element{
-										wsdl.NewElement("ID", "xsd:string", "0", "unbounded"),
-										wsdl.NewElement("RowID", "xsd:string", "0", "unbounded"),
-										wsdl.NewElement("CustNo", "xsd:string", "0", "unbounded"),
-										wsdl.NewElement("SubrNo", "xsd:string", "0", "unbounded"),
-										wsdl.NewElement("ListName", "xsd:string", "0", "unbounded"),
-									},
+									Elements: NewElements(pro.InputType().SingleFields()),
+								},
+							},
+						},
+						{
+							Element: wsdl.Element{
+								Name: pro.OutputType().TypeName(),
+							},
+							ComplexType: wsdl.ComplexType{
+								Sequence: wsdl.Sequence{
+									Elements: NewElements(pro.OutputType().SingleFields()),
+								},
+							},
+						},
+						{
+							Element: wsdl.Element{
+								Name: pro.ErrorType().TypeName(),
+							},
+							ComplexType: wsdl.ComplexType{
+								Sequence: wsdl.Sequence{
+									Elements: NewElements(pro.ErrorType().SingleFields()),
 								},
 							},
 						},
@@ -61,18 +75,18 @@ func WSDL(pro Prototype) (string, error) {
 			},
 		},
 		Messages: []wsdl.Message{
-			wsdl.NewMessage("ElasticInput", "gotype:Elastic", "GOWSDL_Message"),
-			wsdl.NewMessage("ElasticOutput", "gotype:ElasticResponse", "GOWSDL_Message"),
-			wsdl.NewMessage("ElasticError", "gotype:ElasticFault", "GOWSDL_Message"),
+			wsdl.NewMessage(pro.InputType().MessageName(), pro.InputType().TypeName()),
+			wsdl.NewMessage(pro.OutputType().MessageName(), pro.OutputType().TypeName()),
+			wsdl.NewMessage(pro.ErrorType().MessageName(), pro.ErrorType().TypeName()),
 		},
 		PortType: wsdl.PortType{
 			Name: "GOWSDL_PortType",
 			Operations: []wsdl.WSDLOperation{
 				{
-					Name:   "Elastic",
-					Input:  wsdl.NewIOOperation("ElasticInput", ""),
-					Output: wsdl.NewIOOperation("ElasticOutput", ""),
-					Fault:  wsdl.NewFaultOperation("ElasticError", "ElasticError", ""),
+					Name:   pro.OperationName(),
+					Input:  wsdl.NewIOOperation(pro.InputType().MessageName(), ""),
+					Output: wsdl.NewIOOperation(pro.OutputType().MessageName(), ""),
+					Fault:  wsdl.NewFaultOperation(pro.ErrorType().MessageName(), pro.ErrorType().MessageName(), ""),
 				},
 			},
 		},
@@ -84,7 +98,7 @@ func WSDL(pro Prototype) (string, error) {
 				Transport: "http://schemas.xmlsoap.org/soap/http",
 			},
 			Operation: []wsdl.WSDLOperation{
-				wsdl.NewWSDLOperation("Elastic", "Elastic", "ElasticError"),
+				wsdl.NewWSDLOperation(pro.OperationName(), pro.OperationName(), pro.ErrorType().MessageName()),
 			},
 		},
 		Service: wsdl.NewService("http://localhost:1323/elastic"),
@@ -95,4 +109,12 @@ func WSDL(pro Prototype) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func NewElements(names []string) []wsdl.Element {
+	elements := []wsdl.Element{}
+	for _, v := range names {
+		elements = append(elements, wsdl.NewElement(v, "xsd:string", "0", "unbounded"))
+	}
+	return elements
 }
