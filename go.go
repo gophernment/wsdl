@@ -32,44 +32,19 @@ func WSDL(s string) (string, error) {
 							Sequence: wsdl.Sequence{
 								Elements: []wsdl.SequenceElement{
 									{
-										Element: wsdl.Element{
-											Name:      "ID",
-											Type:      "xsd:string",
-											MinOccurs: 0,
-											MaxOccurs: "unbounded",
-										},
+										Element: NewElement("ID", "xsd:string", "unbounded", 0),
 									},
 									{
-										Element: wsdl.Element{
-											Name:      "RowID",
-											Type:      "xsd:string",
-											MinOccurs: 0,
-											MaxOccurs: "unbounded",
-										},
+										Element: NewElement("RowID", "xsd:string", "unbounded", 0),
 									},
 									{
-										Element: wsdl.Element{
-											Name:      "CustNo",
-											Type:      "xsd:string",
-											MinOccurs: 0,
-											MaxOccurs: "unbounded",
-										},
+										Element: NewElement("CustNo", "xsd:string", "unbounded", 0),
 									},
 									{
-										Element: wsdl.Element{
-											Name:      "SubrNo",
-											Type:      "xsd:string",
-											MinOccurs: 0,
-											MaxOccurs: "unbounded",
-										},
+										Element: NewElement("SubrNo", "xsd:string", "unbounded", 0),
 									},
 									{
-										Element: wsdl.Element{
-											Name:      "ListName",
-											Type:      "xsd:string",
-											MinOccurs: 0,
-											MaxOccurs: "unbounded",
-										},
+										Element: NewElement("ListName", "xsd:string", "unbounded", 0),
 									},
 								},
 							},
@@ -113,6 +88,15 @@ func WSDL(s string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func NewElement(name, typ, max string, min int) wsdl.Element {
+	return wsdl.Element{
+		Name:      name,
+		Type:      typ,
+		MinOccurs: min,
+		MaxOccurs: max,
+	}
 }
 
 func NewMessage(name, elem, msgName string) wsdl.Message {
