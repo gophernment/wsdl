@@ -21,18 +21,18 @@ func WSDL(s string) (string, error) {
 							Element: wsdl.Element{
 								Name:      "Elastic",
 								Type:      "",
-								MinOccurs: 0,
+								MinOccurs: "0",
 								MaxOccurs: "",
 							},
 							ComplexType: wsdl.ComplexType{
 								Name: "",
 								Sequence: wsdl.Sequence{
 									Elements: []wsdl.Element{
-										NewElement("ID", "xsd:string", "unbounded", 0),
-										NewElement("RowID", "xsd:string", "unbounded", 0),
-										NewElement("CustNo", "xsd:string", "unbounded", 0),
-										NewElement("SubrNo", "xsd:string", "unbounded", 0),
-										NewElement("ListName", "xsd:string", "unbounded", 0),
+										NewElement("ID", "xsd:string", "0", "unbounded"),
+										NewElement("RowID", "xsd:string", "0", "unbounded"),
+										NewElement("CustNo", "xsd:string", "0", "unbounded"),
+										NewElement("SubrNo", "xsd:string", "0", "unbounded"),
+										NewElement("ListName", "xsd:string", "0", "unbounded"),
 									},
 								},
 							},
@@ -78,7 +78,7 @@ func WSDL(s string) (string, error) {
 	return string(b), nil
 }
 
-func NewElement(name, typ, max string, min int) wsdl.Element {
+func NewElement(name, typ, min, max string) wsdl.Element {
 	return wsdl.Element{
 		Name:      name,
 		Type:      typ,
