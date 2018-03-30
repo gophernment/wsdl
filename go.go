@@ -101,7 +101,7 @@ func WSDL(pro Prototype) (string, error) {
 				wsdl.NewWSDLOperation(pro.OperationName(), pro.OperationName(), pro.ErrorType().MessageName()),
 			},
 		},
-		Service: wsdl.NewService("http://localhost:1323/elastic"),
+		Service: wsdl.NewService(pro.Location()),
 	}
 
 	b, err := xml.MarshalIndent(&def, "", "    ")
