@@ -116,7 +116,7 @@ func WSDL(opers ...IOperation) (string, error) {
 		def.Service = append(def.Service, oper.Service())
 	}
 
-	b, err := xml.MarshalIndent(&def, "", "    ")
+	b, err := xml.MarshalIndent(&def, "", "	")
 	if err != nil {
 		return "", err
 	}
