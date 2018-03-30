@@ -30,22 +30,12 @@ func WSDL(s string) (string, error) {
 						{
 							Name: "",
 							Sequence: wsdl.Sequence{
-								Elements: []wsdl.SequenceElement{
-									{
-										Element: NewElement("ID", "xsd:string", "unbounded", 0),
-									},
-									{
-										Element: NewElement("RowID", "xsd:string", "unbounded", 0),
-									},
-									{
-										Element: NewElement("CustNo", "xsd:string", "unbounded", 0),
-									},
-									{
-										Element: NewElement("SubrNo", "xsd:string", "unbounded", 0),
-									},
-									{
-										Element: NewElement("ListName", "xsd:string", "unbounded", 0),
-									},
+								Elements: []wsdl.Element{
+									NewElement("ID", "xsd:string", "unbounded", 0),
+									NewElement("RowID", "xsd:string", "unbounded", 0),
+									NewElement("CustNo", "xsd:string", "unbounded", 0),
+									NewElement("SubrNo", "xsd:string", "unbounded", 0),
+									NewElement("ListName", "xsd:string", "unbounded", 0),
 								},
 							},
 						},
