@@ -80,6 +80,8 @@ func WSDL(s string) (string, error) {
 		},
 		Messages: []wsdl.Message{
 			NewMessage("ElasticInput", "Elastic", "GOWSDL_Message"),
+			NewMessage("ElasticOutput", "ElasticResponse", "GOWSDL_Message"),
+			NewMessage("ElasticError", "ElasticFault", "GOWSDL_Message"),
 		},
 		PortType: wsdl.PortType{
 			Name: "GOWSDL_PortType",
