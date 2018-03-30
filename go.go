@@ -24,13 +24,19 @@ type Type interface {
 
 func WSDL(pro Prototype) (string, error) {
 	def := wsdl.Definitions{
-		Documentation: "",
+		WSDL:            "http://schemas.xmlsoap.org/wsdl/",
+		XSD:             "http://www.w3.org/2001/XMLSchema",
+		Soap:            "http://schemas.xmlsoap.org/wsdl/soap/",
+		TNS:             "urn:GOWSDL.wsdl",
+		TargetNamespace: "urn:GOWSDL.wsdl",
+		TypeAttr:        "urn:pack.GOWSDL_typedef.golang",
+		Documentation:   "",
 		Types: wsdl.Types{
 			Schemas: []wsdl.Schema{
 				{
 					AttributeFormDefault: "unqualified",
 					ElementFormDefault:   "qualified",
-					TargetNamespace:      "",
+					TargetNamespace:      "urn:pack.GOWSDL_typedef.golang",
 					Imports:              nil,
 					Elements: []wsdl.SchemaElement{
 						{
@@ -55,24 +61,24 @@ func WSDL(pro Prototype) (string, error) {
 			},
 		},
 		Messages: []wsdl.Message{
-			wsdl.NewMessage("ElasticInput", "Elastic", "GOWSDL_Message"),
-			wsdl.NewMessage("ElasticOutput", "ElasticResponse", "GOWSDL_Message"),
-			wsdl.NewMessage("ElasticError", "ElasticFault", "GOWSDL_Message"),
+			wsdl.NewMessage("ElasticInput", "gotype:Elastic", "GOWSDL_Message"),
+			wsdl.NewMessage("ElasticOutput", "gotype:ElasticResponse", "GOWSDL_Message"),
+			wsdl.NewMessage("ElasticError", "gotype:ElasticFault", "GOWSDL_Message"),
 		},
 		PortType: wsdl.PortType{
 			Name: "GOWSDL_PortType",
 			Operations: []wsdl.WSDLOperation{
 				{
 					Name:   "Elastic",
-					Input:  wsdl.NewIOOperation("ElasticInput", ""),
-					Output: wsdl.NewIOOperation("ElasticOutput", ""),
-					Fault:  wsdl.NewFaultOperation("ElasticError", "ElasticError", ""),
+					Input:  wsdl.NewIOOperation("tns:ElasticInput", ""),
+					Output: wsdl.NewIOOperation("tns:ElasticOutput", ""),
+					Fault:  wsdl.NewFaultOperation("tns:ElasticError", "ElasticError", ""),
 				},
 			},
 		},
 		Binding: wsdl.Binding{
 			Name: "GOWSDL_Binding",
-			Type: "GOWSDL_PortType",
+			Type: "tns:GOWSDL_PortType",
 			Binding: wsdl.SOAPBinding{
 				Style:     "document",
 				Transport: "http://schemas.xmlsoap.org/soap/http",
