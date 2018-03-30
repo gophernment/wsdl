@@ -7,17 +7,17 @@ import (
 )
 
 type Prototype interface {
-	Location() string
-	OperationName() string
+	Location() string      // url of service
+	OperationName() string // operation name
 	InputType() Type
 	OutputType() Type
 	ErrorType() Type
 }
 
 type Type interface {
-	MessageName() string
-	TypeName() string
-	SingleFields() []string
+	MessageName() string    // Alias name, request usually follow by Input, response usually follow by Output, error usually be follow by Error
+	TypeName() string       // Type name of XML, request usually same with operation name, response usually follow by Response, error usually be follow by Fault
+	SingleFields() []string // array of fields name
 	// ArrayFields() []string
 }
 
