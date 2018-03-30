@@ -91,23 +91,16 @@ func WSDL(s string) (string, error) {
 			Name: "GOWSDL_PortType",
 			Operations: []wsdl.WSDLOperation{
 				{
-					Name: "Elastic",
-					Input: wsdl.InputOperation{
-						Operation: wsdl.Operation{
-							Message: "ElasticInput",
-						},
-					},
-					Output: wsdl.OutputOperation{
-						Operation: wsdl.Operation{
-							Message: "ElasticOutput",
-						},
-					},
-					Fault: wsdl.FaultOperation{
-						Operation: wsdl.Operation{
-							Message: "ElasticError",
-						},
-						Name: "ElasticError",
-					},
+					Name:   "Elastic",
+					Input:  NewIOOperation("ElasticInput", ""),
+					Output: NewIOOperation("ElasticOutput", ""),
+					Fault:  NewFaultOperation("ElasticError", "ElasticError", ""),
+					// Fault: wsdl.FaultOperation{
+					// 	Operation: wsdl.Operation{
+					// 		Message: "ElasticError",
+					// 	},
+					// 	Name: "ElasticError",
+					// },
 				},
 			},
 		},
@@ -119,16 +112,7 @@ func WSDL(s string) (string, error) {
 				Transport: "http://schemas.xmlsoap.org/soap/http",
 			},
 			Operation: []wsdl.WSDLOperation{
-				{
-					Name: "Elastic",
-					Operation: &wsdl.ActionOperation{
-						SoapAction: "Elastic",
-						Style:      "document",
-					},
-					Input:  NewIOOperation(),
-					Output: NewIOOperation(),
-					Fault:  NewFaultOperation("ElasticError"),
-				},
+				NewWSDLOperation("Elastic", "Elastic", "ElasticError"),
 			},
 		},
 		Service: NewService("http://localhost:1323/elastic"),
@@ -141,28 +125,55 @@ func WSDL(s string) (string, error) {
 	return string(b), nil
 }
 
-func NewIOOperation() wsdl.IOOperation {
-	return wsdl.InputOperation{
-		Operation: wsdl.Operation{
-			Message: "",
+func NewWSDLOperation(name, action, fault string) wsdl.WSDLOperation {
+	return wsdl.WSDLOperation{
+		Name: name,
+		Operation: &wsdl.ActionOperation{
+			SoapAction: action,
+			Style:      "document",
 		},
-		Body: &wsdl.SOAPBody{
-			Use: "literal",
-		},
+		Input:  NewIOOperation("", "literal"),
+		Output: NewIOOperation("", "literal"),
+		Fault:  NewFaultOperation("", fault, "literal"),
 	}
 }
 
-func NewFaultOperation(name string) wsdl.FaultOperation {
+func NewIOOperation(msg, use string) wsdl.IOOperation {
+	return wsdl.InputOperation{
+		Operation: wsdl.Operation{
+			Message: msg,
+		},
+		Body: NewSOAPBody(use),
+	}
+}
+
+func NewSOAPBody(use string) *wsdl.SOAPBody {
+	if use != "" {
+		return &wsdl.SOAPBody{
+			Use: use,
+		}
+	}
+	return nil
+}
+
+func NewFaultOperation(msg, name, use string) wsdl.FaultOperation {
 	return wsdl.FaultOperation{
 		Operation: wsdl.Operation{
-			Message: "",
+			Message: msg,
 		},
-		Name: name,
-		Fault: &wsdl.SOAPFault{
-			Name: name,
-			Use:  "literal",
-		},
+		Name:  name,
+		Fault: NewSOAPFault(name, use),
 	}
+}
+
+func NewSOAPFault(name, use string) *wsdl.SOAPFault {
+	if use != "" {
+		return &wsdl.SOAPFault{
+			Name: name,
+			Use:  use,
+		}
+	}
+	return nil
 }
 
 func NewService(loc string) wsdl.Service {
