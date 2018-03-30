@@ -71,7 +71,7 @@ func WSDL(s string) (string, error) {
 		Service: NewService("http://localhost:1323/elastic"),
 	}
 
-	b, err := xml.Marshal(&def)
+	b, err := xml.MarshalIndent(&def, "", "    ")
 	if err != nil {
 		return "", err
 	}
