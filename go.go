@@ -6,7 +6,23 @@ import (
 	"github.com/pallat/wsdl"
 )
 
-func WSDL(s string) (string, error) {
+var serviceLocation = "http://localhost:1323/elastic"
+
+type Prototype interface {
+	Location() string
+	OperationName() string
+	InputType() Type
+	OutputType() Type
+	ErrorType() Type
+}
+
+type Type interface {
+	Name() string
+	SingleFields() []string
+	// ArrayFields() []string
+}
+
+func WSDL(pro Prototype) (string, error) {
 	def := wsdl.Definitions{
 		Documentation: "",
 		Types: wsdl.Types{

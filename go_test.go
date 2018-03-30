@@ -5,8 +5,60 @@ import (
 	"testing"
 )
 
+type Elastic struct{}
+
+func (Elastic) Location() string {
+	return "http://localhost:1323/elastic"
+}
+func (Elastic) OperationName() string {
+	return "Elastic"
+}
+
+func (Elastic) InputType() Type {
+	return ElasticInput{}
+}
+func (Elastic) OutputType() Type {
+	return ElasticOutput{}
+}
+func (Elastic) ErrorType() Type {
+	return ElasticError{}
+}
+
+type ElasticInput struct {
+	ID       string `xml:"ID"`
+	RowID    string `xml:"RowID"`
+	CustNo   string `xml:"CustNo"`
+	SubrNo   string `xml:"SubrNo"`
+	ListName string `xml:"ListName"`
+}
+
+func (ElasticInput) Name() string {
+	return "ElasticInput"
+}
+func (ElasticInput) SingleFields() []string {
+	return []string{"ID", "RowID", "CustNo", "SubrNo", "ListName"}
+}
+
+type ElasticOutput struct{}
+
+func (ElasticOutput) Name() string {
+	return "ElasticOutput"
+}
+func (ElasticOutput) SingleFields() []string {
+	return []string{"Index", "Type", "ID", "Version", "Created"}
+}
+
+type ElasticError struct{}
+
+func (ElasticError) Name() string {
+	return "ElasticError"
+}
+func (ElasticError) SingleFields() []string {
+	return []string{"En", "Th", "Code"}
+}
+
 func TestGenEasyWSDLFromXMLString(t *testing.T) {
-	wsdlString, err := WSDL(xmlString)
+	wsdlString, err := WSDL(Elastic{})
 	if err != nil {
 		t.Error(err)
 		return
