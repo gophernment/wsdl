@@ -67,7 +67,8 @@ func (ElasticError) SingleFields() []string {
 }
 
 func TestGenEasyWSDLFromXMLString(t *testing.T) {
-	wsdlString, err := WSDL(Elastic{})
+	oper := NewOperation(Elastic{})
+	wsdlString, err := WSDL(oper)
 	if err != nil {
 		t.Error(err)
 		return

@@ -21,64 +21,98 @@ type Type interface {
 	// ArrayFields() []string
 }
 
-func WSDL(pro Prototype) (string, error) {
+type IOperation interface {
+	Schema() wsdl.Schema
+	Messages() []wsdl.Message
+	PortTypeOperations() []wsdl.WSDLOperation
+	BindingOperation() wsdl.WSDLOperation
+	Service() wsdl.Service
+}
+
+func NewOperation(pro Prototype) IOperation {
+	return Operation{pro: pro}
+}
+
+type Operation struct {
+	pro Prototype
+}
+
+func (o Operation) Schema() wsdl.Schema {
+	schema := wsdl.DefaultSchema
+	schema.Elements = o.elements()
+	return schema
+}
+
+func (o Operation) elements() []wsdl.SchemaElement {
+	return []wsdl.SchemaElement{
+		{
+			Element: wsdl.Element{
+				Name: o.pro.InputType().TypeName(),
+			},
+			ComplexType: wsdl.ComplexType{
+				Sequence: wsdl.Sequence{
+					Elements: NewElements(o.pro.InputType().SingleFields()),
+				},
+			},
+		},
+		{
+			Element: wsdl.Element{
+				Name: o.pro.OutputType().TypeName(),
+			},
+			ComplexType: wsdl.ComplexType{
+				Sequence: wsdl.Sequence{
+					Elements: NewElements(o.pro.OutputType().SingleFields()),
+				},
+			},
+		},
+		{
+			Element: wsdl.Element{
+				Name: o.pro.ErrorType().TypeName(),
+			},
+			ComplexType: wsdl.ComplexType{
+				Sequence: wsdl.Sequence{
+					Elements: NewElements(o.pro.ErrorType().SingleFields()),
+				},
+			},
+		},
+	}
+}
+
+func (o Operation) Messages() []wsdl.Message {
+	return []wsdl.Message{
+		wsdl.NewMessage(o.pro.InputType().MessageName(), o.pro.InputType().TypeName()),
+		wsdl.NewMessage(o.pro.OutputType().MessageName(), o.pro.OutputType().TypeName()),
+		wsdl.NewMessage(o.pro.ErrorType().MessageName(), o.pro.ErrorType().TypeName()),
+	}
+}
+
+func (o Operation) PortTypeOperations() []wsdl.WSDLOperation {
+	return []wsdl.WSDLOperation{
+		{
+			Name:   o.pro.OperationName(),
+			Input:  wsdl.NewIOOperation(o.pro.InputType().MessageName(), ""),
+			Output: wsdl.NewIOOperation(o.pro.OutputType().MessageName(), ""),
+			Fault:  wsdl.NewFaultOperation(o.pro.ErrorType().MessageName(), o.pro.ErrorType().MessageName(), ""),
+		},
+	}
+}
+
+func (o Operation) BindingOperation() wsdl.WSDLOperation {
+	return wsdl.NewWSDLOperation(o.pro.OperationName(), o.pro.OperationName(), o.pro.ErrorType().MessageName())
+}
+
+func (o Operation) Service() wsdl.Service {
+	return wsdl.NewService(o.pro.Location())
+}
+
+func WSDL(oper IOperation) (string, error) {
 	def := wsdl.DefaultDefenitions
 
-	schemas := wsdl.DefaultSchema
-	schemas.Elements = []wsdl.SchemaElement{
-		{
-			Element: wsdl.Element{
-				Name: pro.InputType().TypeName(),
-			},
-			ComplexType: wsdl.ComplexType{
-				Sequence: wsdl.Sequence{
-					Elements: NewElements(pro.InputType().SingleFields()),
-				},
-			},
-		},
-		{
-			Element: wsdl.Element{
-				Name: pro.OutputType().TypeName(),
-			},
-			ComplexType: wsdl.ComplexType{
-				Sequence: wsdl.Sequence{
-					Elements: NewElements(pro.OutputType().SingleFields()),
-				},
-			},
-		},
-		{
-			Element: wsdl.Element{
-				Name: pro.ErrorType().TypeName(),
-			},
-			ComplexType: wsdl.ComplexType{
-				Sequence: wsdl.Sequence{
-					Elements: NewElements(pro.ErrorType().SingleFields()),
-				},
-			},
-		},
-	}
-
-	def.Types = wsdl.Types{
-		Schemas: []wsdl.Schema{schemas},
-	}
-
-	def.Messages = []wsdl.Message{
-		wsdl.NewMessage(pro.InputType().MessageName(), pro.InputType().TypeName()),
-		wsdl.NewMessage(pro.OutputType().MessageName(), pro.OutputType().TypeName()),
-		wsdl.NewMessage(pro.ErrorType().MessageName(), pro.ErrorType().TypeName()),
-	}
-
-	def.PortType.Operations = []wsdl.WSDLOperation{
-		{
-			Name:   pro.OperationName(),
-			Input:  wsdl.NewIOOperation(pro.InputType().MessageName(), ""),
-			Output: wsdl.NewIOOperation(pro.OutputType().MessageName(), ""),
-			Fault:  wsdl.NewFaultOperation(pro.ErrorType().MessageName(), pro.ErrorType().MessageName(), ""),
-		},
-	}
-
-	def.Binding.Operation = append(def.Binding.Operation, wsdl.NewWSDLOperation(pro.OperationName(), pro.OperationName(), pro.ErrorType().MessageName()))
-	def.Service = wsdl.NewService(pro.Location())
+	def.Types.Schemas = append(def.Types.Schemas, oper.Schema())
+	def.Messages = append(def.Messages, oper.Messages()...)
+	def.PortType.Operations = append(def.PortType.Operations, oper.PortTypeOperations()...)
+	def.Binding.Operation = append(def.Binding.Operation, oper.BindingOperation())
+	def.Service = oper.Service()
 
 	b, err := xml.MarshalIndent(&def, "", "    ")
 	if err != nil {
