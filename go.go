@@ -24,18 +24,16 @@ func WSDL(s string) (string, error) {
 								MinOccurs: 0,
 								MaxOccurs: "",
 							},
-						},
-					},
-					ComplexTypes: []wsdl.ComplexType{
-						{
-							Name: "",
-							Sequence: wsdl.Sequence{
-								Elements: []wsdl.Element{
-									NewElement("ID", "xsd:string", "unbounded", 0),
-									NewElement("RowID", "xsd:string", "unbounded", 0),
-									NewElement("CustNo", "xsd:string", "unbounded", 0),
-									NewElement("SubrNo", "xsd:string", "unbounded", 0),
-									NewElement("ListName", "xsd:string", "unbounded", 0),
+							ComplexType: wsdl.ComplexType{
+								Name: "",
+								Sequence: wsdl.Sequence{
+									Elements: []wsdl.Element{
+										NewElement("ID", "xsd:string", "unbounded", 0),
+										NewElement("RowID", "xsd:string", "unbounded", 0),
+										NewElement("CustNo", "xsd:string", "unbounded", 0),
+										NewElement("SubrNo", "xsd:string", "unbounded", 0),
+										NewElement("ListName", "xsd:string", "unbounded", 0),
+									},
 								},
 							},
 						},
