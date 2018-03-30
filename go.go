@@ -79,28 +79,15 @@ func WSDL(pro Prototype) (string, error) {
 			wsdl.NewMessage(pro.OutputType().MessageName(), pro.OutputType().TypeName()),
 			wsdl.NewMessage(pro.ErrorType().MessageName(), pro.ErrorType().TypeName()),
 		},
-		PortType: wsdl.PortType{
-			Name: "GOWSDL_PortType",
-			Operations: []wsdl.WSDLOperation{
-				{
-					Name:   pro.OperationName(),
-					Input:  wsdl.NewIOOperation(pro.InputType().MessageName(), ""),
-					Output: wsdl.NewIOOperation(pro.OutputType().MessageName(), ""),
-					Fault:  wsdl.NewFaultOperation(pro.ErrorType().MessageName(), pro.ErrorType().MessageName(), ""),
-				},
+		PortType: NewPortType([]wsdl.WSDLOperation{
+			{
+				Name:   pro.OperationName(),
+				Input:  wsdl.NewIOOperation(pro.InputType().MessageName(), ""),
+				Output: wsdl.NewIOOperation(pro.OutputType().MessageName(), ""),
+				Fault:  wsdl.NewFaultOperation(pro.ErrorType().MessageName(), pro.ErrorType().MessageName(), ""),
 			},
-		},
-		Binding: wsdl.Binding{
-			Name: "GOWSDL_Binding",
-			Type: "tns:GOWSDL_PortType",
-			Binding: wsdl.SOAPBinding{
-				Style:     "document",
-				Transport: "http://schemas.xmlsoap.org/soap/http",
-			},
-			Operation: []wsdl.WSDLOperation{
-				wsdl.NewWSDLOperation(pro.OperationName(), pro.OperationName(), pro.ErrorType().MessageName()),
-			},
-		},
+		}),
+		Binding: NewBinding(wsdl.NewWSDLOperation(pro.OperationName(), pro.OperationName(), pro.ErrorType().MessageName())),
 		Service: wsdl.NewService(pro.Location()),
 	}
 
@@ -109,6 +96,18 @@ func WSDL(pro Prototype) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func NewPortType(opers []wsdl.WSDLOperation) wsdl.PortType {
+	port := wsdl.DefaultPortType
+	port.Operations = opers
+	return port
+}
+
+func NewBinding(oper wsdl.WSDLOperation) wsdl.Binding {
+	binding := wsdl.DefaultBinding
+	binding.Operation = append(binding.Operation, oper)
+	return binding
 }
 
 func NewElements(names []string) []wsdl.Element {
