@@ -105,14 +105,16 @@ func (o Operation) Service() wsdl.Service {
 	return wsdl.NewService(o.pro.Location())
 }
 
-func WSDL(oper IOperation) (string, error) {
+func WSDL(opers ...IOperation) (string, error) {
 	def := wsdl.DefaultDefenitions
 
-	def.Types.Schemas = append(def.Types.Schemas, oper.Schema())
-	def.Messages = append(def.Messages, oper.Messages()...)
-	def.PortType.Operations = append(def.PortType.Operations, oper.PortTypeOperations()...)
-	def.Binding.Operation = append(def.Binding.Operation, oper.BindingOperation())
-	def.Service = append(def.Service, oper.Service())
+	for _, oper := range opers {
+		def.Types.Schemas = append(def.Types.Schemas, oper.Schema())
+		def.Messages = append(def.Messages, oper.Messages()...)
+		def.PortType.Operations = append(def.PortType.Operations, oper.PortTypeOperations()...)
+		def.Binding.Operation = append(def.Binding.Operation, oper.BindingOperation())
+		def.Service = append(def.Service, oper.Service())
+	}
 
 	b, err := xml.MarshalIndent(&def, "", "    ")
 	if err != nil {
