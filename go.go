@@ -19,10 +19,7 @@ func WSDL(s string) (string, error) {
 					Elements: []wsdl.SchemaElement{
 						{
 							Element: wsdl.Element{
-								Name:      "Elastic",
-								Type:      "",
-								MinOccurs: "0",
-								MaxOccurs: "",
+								Name: "Elastic",
 							},
 							ComplexType: wsdl.ComplexType{
 								Name: "",
