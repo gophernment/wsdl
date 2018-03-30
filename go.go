@@ -25,11 +25,11 @@ func WSDL(s string) (string, error) {
 								Name: "",
 								Sequence: wsdl.Sequence{
 									Elements: []wsdl.Element{
-										NewElement("ID", "xsd:string", "0", "unbounded"),
-										NewElement("RowID", "xsd:string", "0", "unbounded"),
-										NewElement("CustNo", "xsd:string", "0", "unbounded"),
-										NewElement("SubrNo", "xsd:string", "0", "unbounded"),
-										NewElement("ListName", "xsd:string", "0", "unbounded"),
+										wsdl.NewElement("ID", "xsd:string", "0", "unbounded"),
+										wsdl.NewElement("RowID", "xsd:string", "0", "unbounded"),
+										wsdl.NewElement("CustNo", "xsd:string", "0", "unbounded"),
+										wsdl.NewElement("SubrNo", "xsd:string", "0", "unbounded"),
+										wsdl.NewElement("ListName", "xsd:string", "0", "unbounded"),
 									},
 								},
 							},
@@ -39,18 +39,18 @@ func WSDL(s string) (string, error) {
 			},
 		},
 		Messages: []wsdl.Message{
-			NewMessage("ElasticInput", "Elastic", "GOWSDL_Message"),
-			NewMessage("ElasticOutput", "ElasticResponse", "GOWSDL_Message"),
-			NewMessage("ElasticError", "ElasticFault", "GOWSDL_Message"),
+			wsdl.NewMessage("ElasticInput", "Elastic", "GOWSDL_Message"),
+			wsdl.NewMessage("ElasticOutput", "ElasticResponse", "GOWSDL_Message"),
+			wsdl.NewMessage("ElasticError", "ElasticFault", "GOWSDL_Message"),
 		},
 		PortType: wsdl.PortType{
 			Name: "GOWSDL_PortType",
 			Operations: []wsdl.WSDLOperation{
 				{
 					Name:   "Elastic",
-					Input:  NewIOOperation("ElasticInput", ""),
-					Output: NewIOOperation("ElasticOutput", ""),
-					Fault:  NewFaultOperation("ElasticError", "ElasticError", ""),
+					Input:  wsdl.NewIOOperation("ElasticInput", ""),
+					Output: wsdl.NewIOOperation("ElasticOutput", ""),
+					Fault:  wsdl.NewFaultOperation("ElasticError", "ElasticError", ""),
 				},
 			},
 		},
@@ -62,10 +62,10 @@ func WSDL(s string) (string, error) {
 				Transport: "http://schemas.xmlsoap.org/soap/http",
 			},
 			Operation: []wsdl.WSDLOperation{
-				NewWSDLOperation("Elastic", "Elastic", "ElasticError"),
+				wsdl.NewWSDLOperation("Elastic", "Elastic", "ElasticError"),
 			},
 		},
-		Service: NewService("http://localhost:1323/elastic"),
+		Service: wsdl.NewService("http://localhost:1323/elastic"),
 	}
 
 	b, err := xml.MarshalIndent(&def, "", "    ")
@@ -73,87 +73,4 @@ func WSDL(s string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
-}
-
-func NewElement(name, typ, min, max string) wsdl.Element {
-	return wsdl.Element{
-		Name:      name,
-		Type:      typ,
-		MinOccurs: min,
-		MaxOccurs: max,
-	}
-}
-
-func NewMessage(name, elem, msgName string) wsdl.Message {
-	return wsdl.Message{
-		Name: name,
-		Part: wsdl.Part{
-			Element: elem,
-			Name:    msgName,
-		},
-	}
-}
-
-func NewWSDLOperation(name, action, fault string) wsdl.WSDLOperation {
-	return wsdl.WSDLOperation{
-		Name: name,
-		Operation: &wsdl.ActionOperation{
-			SoapAction: action,
-			Style:      "document",
-		},
-		Input:  NewIOOperation("", "literal"),
-		Output: NewIOOperation("", "literal"),
-		Fault:  NewFaultOperation("", fault, "literal"),
-	}
-}
-
-func NewIOOperation(msg, use string) wsdl.IOOperation {
-	return wsdl.InputOperation{
-		Operation: wsdl.Operation{
-			Message: msg,
-		},
-		Body: NewSOAPBody(use),
-	}
-}
-
-func NewSOAPBody(use string) *wsdl.SOAPBody {
-	if use != "" {
-		return &wsdl.SOAPBody{
-			Use: use,
-		}
-	}
-	return nil
-}
-
-func NewFaultOperation(msg, name, use string) wsdl.FaultOperation {
-	return wsdl.FaultOperation{
-		Operation: wsdl.Operation{
-			Message: msg,
-		},
-		Name:  name,
-		Fault: NewSOAPFault(name, use),
-	}
-}
-
-func NewSOAPFault(name, use string) *wsdl.SOAPFault {
-	if use != "" {
-		return &wsdl.SOAPFault{
-			Name: name,
-			Use:  use,
-		}
-	}
-	return nil
-}
-
-func NewService(loc string) wsdl.Service {
-	return wsdl.Service{
-		Name: "GolangWebService",
-		Port: wsdl.Port{
-			Binding: "GOWSDL_Binding",
-			Name:    "GOWSDL_Endpoint",
-			Address: wsdl.Address{
-				Location: loc,
-			},
-		},
-	}
 }
