@@ -79,13 +79,7 @@ func WSDL(s string) (string, error) {
 			},
 		},
 		Messages: []wsdl.Message{
-			{
-				Name: "ElasticInput",
-				Part: wsdl.Part{
-					Element: "Elastic",
-					Name:    "GOWSDL_Message",
-				},
-			},
+			NewMessage("ElasticInput", "Elastic", "GOWSDL_Message"),
 		},
 		PortType: wsdl.PortType{
 			Name: "GOWSDL_PortType",
@@ -95,12 +89,6 @@ func WSDL(s string) (string, error) {
 					Input:  NewIOOperation("ElasticInput", ""),
 					Output: NewIOOperation("ElasticOutput", ""),
 					Fault:  NewFaultOperation("ElasticError", "ElasticError", ""),
-					// Fault: wsdl.FaultOperation{
-					// 	Operation: wsdl.Operation{
-					// 		Message: "ElasticError",
-					// 	},
-					// 	Name: "ElasticError",
-					// },
 				},
 			},
 		},
@@ -123,6 +111,16 @@ func WSDL(s string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+func NewMessage(name, elem, msgName string) wsdl.Message {
+	return wsdl.Message{
+		Name: name,
+		Part: wsdl.Part{
+			Element: elem,
+			Name:    msgName,
+		},
+	}
 }
 
 func NewWSDLOperation(name, action, fault string) wsdl.WSDLOperation {
