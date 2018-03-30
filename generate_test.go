@@ -24,13 +24,7 @@ func (Elastic) ErrorType() Type {
 	return ElasticError{}
 }
 
-type ElasticInput struct {
-	ID       string `xml:"ID"`
-	RowID    string `xml:"RowID"`
-	CustNo   string `xml:"CustNo"`
-	SubrNo   string `xml:"SubrNo"`
-	ListName string `xml:"ListName"`
-}
+type ElasticInput struct{}
 
 func (ElasticInput) MessageName() string {
 	return "ElasticInput"
