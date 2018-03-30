@@ -112,7 +112,7 @@ func WSDL(oper IOperation) (string, error) {
 	def.Messages = append(def.Messages, oper.Messages()...)
 	def.PortType.Operations = append(def.PortType.Operations, oper.PortTypeOperations()...)
 	def.Binding.Operation = append(def.Binding.Operation, oper.BindingOperation())
-	def.Service = oper.Service()
+	def.Service = append(def.Service, oper.Service())
 
 	b, err := xml.MarshalIndent(&def, "", "    ")
 	if err != nil {
