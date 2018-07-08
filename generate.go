@@ -3,7 +3,7 @@ package wsdl
 import (
 	"encoding/xml"
 
-	"github.com/pallat/wsdl"
+	"github.com/pallat/wsdl/def"
 )
 
 type Prototype interface {
@@ -22,11 +22,11 @@ type Type interface {
 }
 
 type IOperation interface {
-	Schema() wsdl.Schema
-	Messages() []wsdl.Message
-	PortTypeOperations() []wsdl.WSDLOperation
-	BindingOperation() wsdl.WSDLOperation
-	Service() wsdl.Service
+	Schema() def.Schema
+	Messages() []def.Message
+	PortTypeOperations() []def.WSDLOperation
+	BindingOperation() def.WSDLOperation
+	Service() def.Service
 }
 
 func NewOperation(pro Prototype) IOperation {
@@ -37,40 +37,40 @@ type Operation struct {
 	pro Prototype
 }
 
-func (o Operation) Schema() wsdl.Schema {
-	schema := wsdl.DefaultSchema
+func (o Operation) Schema() def.Schema {
+	schema := def.DefaultSchema
 	schema.Elements = o.elements()
 	return schema
 }
 
-func (o Operation) elements() []wsdl.SchemaElement {
-	return []wsdl.SchemaElement{
+func (o Operation) elements() []def.SchemaElement {
+	return []def.SchemaElement{
 		{
-			Element: wsdl.Element{
+			Element: def.Element{
 				Name: o.pro.InputType().TypeName(),
 			},
-			ComplexType: wsdl.ComplexType{
-				Sequence: wsdl.Sequence{
+			ComplexType: def.ComplexType{
+				Sequence: def.Sequence{
 					Elements: NewElements(o.pro.InputType().SingleFields()),
 				},
 			},
 		},
 		{
-			Element: wsdl.Element{
+			Element: def.Element{
 				Name: o.pro.OutputType().TypeName(),
 			},
-			ComplexType: wsdl.ComplexType{
-				Sequence: wsdl.Sequence{
+			ComplexType: def.ComplexType{
+				Sequence: def.Sequence{
 					Elements: NewElements(o.pro.OutputType().SingleFields()),
 				},
 			},
 		},
 		{
-			Element: wsdl.Element{
+			Element: def.Element{
 				Name: o.pro.ErrorType().TypeName(),
 			},
-			ComplexType: wsdl.ComplexType{
-				Sequence: wsdl.Sequence{
+			ComplexType: def.ComplexType{
+				Sequence: def.Sequence{
 					Elements: NewElements(o.pro.ErrorType().SingleFields()),
 				},
 			},
@@ -78,35 +78,35 @@ func (o Operation) elements() []wsdl.SchemaElement {
 	}
 }
 
-func (o Operation) Messages() []wsdl.Message {
-	return []wsdl.Message{
-		wsdl.NewMessage(o.pro.InputType().MessageName(), o.pro.InputType().TypeName()),
-		wsdl.NewMessage(o.pro.OutputType().MessageName(), o.pro.OutputType().TypeName()),
-		wsdl.NewMessage(o.pro.ErrorType().MessageName(), o.pro.ErrorType().TypeName()),
+func (o Operation) Messages() []def.Message {
+	return []def.Message{
+		def.NewMessage(o.pro.InputType().MessageName(), o.pro.InputType().TypeName()),
+		def.NewMessage(o.pro.OutputType().MessageName(), o.pro.OutputType().TypeName()),
+		def.NewMessage(o.pro.ErrorType().MessageName(), o.pro.ErrorType().TypeName()),
 	}
 }
 
-func (o Operation) PortTypeOperations() []wsdl.WSDLOperation {
-	return []wsdl.WSDLOperation{
+func (o Operation) PortTypeOperations() []def.WSDLOperation {
+	return []def.WSDLOperation{
 		{
 			Name:   o.pro.OperationName(),
-			Input:  wsdl.NewIOOperation(o.pro.InputType().MessageName(), ""),
-			Output: wsdl.NewIOOperation(o.pro.OutputType().MessageName(), ""),
-			Fault:  wsdl.NewFaultOperation(o.pro.ErrorType().MessageName(), o.pro.ErrorType().MessageName(), ""),
+			Input:  def.NewIOOperation(o.pro.InputType().MessageName(), ""),
+			Output: def.NewIOOperation(o.pro.OutputType().MessageName(), ""),
+			Fault:  def.NewFaultOperation(o.pro.ErrorType().MessageName(), o.pro.ErrorType().MessageName(), ""),
 		},
 	}
 }
 
-func (o Operation) BindingOperation() wsdl.WSDLOperation {
-	return wsdl.NewWSDLOperation(o.pro.OperationName(), o.pro.OperationName(), o.pro.ErrorType().MessageName())
+func (o Operation) BindingOperation() def.WSDLOperation {
+	return def.NewWSDLOperation(o.pro.OperationName(), o.pro.OperationName(), o.pro.ErrorType().MessageName())
 }
 
-func (o Operation) Service() wsdl.Service {
-	return wsdl.NewService(o.pro.Location())
+func (o Operation) Service() def.Service {
+	return def.NewService(o.pro.Location())
 }
 
 func WSDL(opers ...IOperation) (string, error) {
-	def := wsdl.DefaultDefenitions
+	def := def.DefaultDefenitions
 
 	for _, oper := range opers {
 		def.Types.Schemas = append(def.Types.Schemas, oper.Schema())
@@ -123,10 +123,10 @@ func WSDL(opers ...IOperation) (string, error) {
 	return string(b), nil
 }
 
-func NewElements(names []string) []wsdl.Element {
-	elements := []wsdl.Element{}
+func NewElements(names []string) []def.Element {
+	elements := []def.Element{}
 	for _, v := range names {
-		elements = append(elements, wsdl.NewElement(v, "xsd:string", "0", "unbounded"))
+		elements = append(elements, def.NewElement(v, "xsd:string", "0", "unbounded"))
 	}
 	return elements
 }
