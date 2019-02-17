@@ -3,7 +3,7 @@ package wsdl
 import (
 	"encoding/xml"
 
-	"github.com/goknowgo/wsdl/xsd"
+	"github.com/devygo/wsdl/xsd"
 )
 
 type Definitions struct {
