@@ -20,7 +20,7 @@ type Definitions struct {
 	Messages        []Message `xml:"message"`
 	PortType        PortType  `xml:"portType"`
 	Binding         []Binding `xml:"binding"`
-	Service         []Service `xml:"service"`
+	Service         Service   `xml:"service"`
 }
 
 type Type struct {
