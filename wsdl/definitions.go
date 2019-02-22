@@ -50,8 +50,8 @@ type PortTypeOperation struct {
 }
 
 type PortTypeOperationMessage struct {
-	Name    string   `xml:"name,attr,omitempty`
-	Message xml.Attr `xml:"message,attr"`
+	Name    string `xml:"name,attr,omitempty`
+	Message string `xml:"message,attr"`
 }
 
 type Binding struct {
