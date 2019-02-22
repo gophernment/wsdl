@@ -15,6 +15,7 @@ type Schema struct {
 	Imports            []Import      `xml:"http://www.w3.org/2001/XMLSchema import"`
 	Elements           []Element     `xml:"http://www.w3.org/2001/XMLSchema element"`
 	ComplexTypes       []ComplexType `xml:"http://www.w3.org/2001/XMLSchema complexType"`
+	SimpleTypes        []SimpleType  `xml:"http://www.w3.org/2001/XMLSchema simpleType"`
 }
 
 type Include struct {
@@ -32,6 +33,22 @@ type Element struct {
 	Form         string       `xml:"form,attr"`
 	Name         string       `xml:"name,attr"`
 	ComplexTypes *ComplexType `xml:"http://www.w3.org/2001/XMLSchema complexType"`
+}
+
+type SimpleType struct {
+	XMLName     xml.Name `xml:"http://www.w3.org/2001/XMLSchema simpleType"`
+	Restriction Restriction
+}
+
+type Restriction struct {
+	XMLName xml.Name `xml:"http://www.w3.org/2001/XMLSchema restriction"`
+	Base    string   `xml:"base,attr"`
+	Pattern Pattern
+}
+
+type Pattern struct {
+	XMLName xml.Name `xml:"http://www.w3.org/2001/XMLSchema pattern"`
+	Value   string   `xml:"value,attr"`
 }
 
 type ComplexType struct {
