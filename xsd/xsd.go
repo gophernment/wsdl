@@ -11,9 +11,16 @@ type Schema struct {
 	TargetNamespace    string        `xml:"targetNamespace,attr"`
 	ElementFormDefault string        `xml:"elementFormDefault,attr"`
 	Version            string        `xml:"version,attr"`
+	Include            []Include     `xml:"http://www.w3.org/2001/XMLSchema include"`
 	Imports            []Import      `xml:"http://www.w3.org/2001/XMLSchema import"`
 	Elements           []Element     `xml:"http://www.w3.org/2001/XMLSchema element"`
 	ComplexTypes       []ComplexType `xml:"http://www.w3.org/2001/XMLSchema complexType"`
+}
+
+type Include struct {
+	XMLName        xml.Name `xml:"http://www.w3.org/2001/XMLSchema include"`
+	SchemaLocation string   `xml:"schemaLocation,attr"`
+	Namespace      string   `xml:"namespace,attr"`
 }
 
 type Element struct {
